@@ -2,8 +2,20 @@ package sloggcp
 
 import "log/slog"
 
+// Key names handled by this package.
 const (
-	sourceLocationKey = "logging.googleapis.com/sourceLocation"
+	SourceLocationKey = "logging.googleapis.com/sourceLocation" // [slog.SourceKey] replacement
+	SeverityKey       = "severity"                              // [slog.LevelKey] replacement
+	MessageKey        = "message"                               // [slog.MessageKey] replacement
+)
+
+// Severity values used by GCP logging.
+const (
+	DebugSeverity   = "DEBUG"
+	InfoSeverity    = "INFO"
+	WarningSeverity = "WARNING"
+	ErrorSeverity   = "ERROR"
+	DefaultSeverity = "DEFAULT"
 )
 
 // ReplaceAttr replaces slog default attributes with GCP compatible ones
@@ -19,28 +31,28 @@ func ReplaceAttr(groups []string, a slog.Attr) slog.Attr {
 	case a.Key == slog.LevelKey && len(groups) == 0:
 		logLevel, ok := a.Value.Any().(slog.Level)
 		if !ok {
-			return a
+			return slog.String(SeverityKey, DefaultSeverity)
 		}
 		switch logLevel {
 		case slog.LevelDebug:
-			return slog.String("severity", "DEBUG")
+			return slog.String(SeverityKey, DebugSeverity)
 		case slog.LevelInfo:
-			return slog.String("severity", "INFO")
+			return slog.String(SeverityKey, InfoSeverity)
 		case slog.LevelWarn:
-			return slog.String("severity", "WARNING")
+			return slog.String(SeverityKey, WarningSeverity)
 		case slog.LevelError:
-			return slog.String("severity", "ERROR")
+			return slog.String(SeverityKey, ErrorSeverity)
 		default:
-			return slog.String("severity", "DEFAULT")
+			return slog.String(SeverityKey, DefaultSeverity)
 		}
 	case a.Key == slog.SourceKey && len(groups) == 0:
 		source, ok := a.Value.Any().(*slog.Source)
 		if !ok || source == nil {
 			return a
 		}
-		return slog.Any(sourceLocationKey, source)
+		return slog.Any(SourceLocationKey, source)
 	case a.Key == slog.MessageKey && len(groups) == 0:
-		return slog.String("message", a.Value.String())
+		return slog.String(MessageKey, a.Value.String())
 	default:
 		return a
 	}
