@@ -6,7 +6,9 @@
 
 `sloggcp` provides utilities to integrate Go's slog logging with Google Cloud Platform (GCP) structured logging.
 
-## ReplaceAttr
+## Features
+
+### ReplaceAttr
 
 It provides a simple implementation of the `ReplaceAttr`
 function for `JSONHandler` from [slog](https://pkg.go.dev/log/slog).
@@ -21,7 +23,7 @@ with [Google Cloud Platform's Structured Logging](https://cloud.google.com/loggi
 | `source` | `logging.googleapis.com/sourceLocation` |
 | `time`   | `time`                                  |
 
-## Error reporting
+### Error reporting
 
 `sloggcp` comes with a error reporting handler, which turns a log line
 into a [formatted error message](https://cloud.google.com/error-reporting/docs/formatting-error-messages) whenever an error is part of the attributes.
@@ -147,3 +149,27 @@ func main() {
 	// {"@type":"type.googleapis.com/google.devtools.clouderrorreporting.v1beta1.ReportedErrorEvent","error":"something went wrong","message":"something went wrong","severity":"ERROR","time":"0001-01-01T00:00:00Z"}
 	// {"@type":"type.googleapis.com/google.devtools.clouderrorreporting.v1beta1.ReportedErrorEvent","error":{"message":"failed to fetch user data","parent":"database connection failed"},"message":"[STACK TRACE]","reportLocation":{"filePath":"user_service.go","lineNumber":42,"functionName":"fetchUserData"},"severity":"ERROR","time":"0001-01-01T00:00:00Z"}
 }
+```
+
+## Supported Go Versions
+
+For security reasons, we normally only support and recommend the use of one of the latest two Go versions (:white_check_mark:).
+Versions that also build are marked with :warning:.
+
+sloggcp depends on functions only implemented in Go 1.25 and later.
+
+| Version | Supported          |
+| ------- | ------------------ |
+| <1.25   | :x:                |
+| 1.25    | :white_check_mark: |
+
+## License
+
+The full functionality of this library is and stays open source and free to use for everyone. Visit
+our [website](https://zitadel.com) and get in touch.
+
+See the exact licensing terms [here](LICENSE)
+
+Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific
+language governing permissions and limitations under the License.
