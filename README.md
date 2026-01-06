@@ -1,7 +1,7 @@
 # sloggcp
 
 [![Go Reference](https://pkg.go.dev/badge/github.com/zitadel/sloggcp.svg)](https://pkg.go.dev/github.com/zitadel/sloggcp)
-[![codecov](https://codecov.io/github/muhlemmer/sloggcp/graph/badge.svg?token=Q1HHED6QPM)](https://codecov.io/github/muhlemmer/sloggcp)
+[![codecov](https://codecov.io/gh/zitadel/sloggcp/graph/badge.svg?token=isvPHbV084)](https://codecov.io/gh/zitadel/sloggcp)
 [![Go Report Card](https://goreportcard.com/badge/github.com/zitadel/sloggcp)](https://goreportcard.com/report/github.com/zitadel/sloggcp)
 
 `sloggcp` provides utilities to integrate Go's slog logging with Google Cloud Platform (GCP) structured logging.
