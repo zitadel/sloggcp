@@ -20,13 +20,32 @@ const (
 	TimeKey           = slog.TimeKey                            // time key (no replacement needed)
 )
 
-// Severity values used by GCP logging.
+type Level = slog.Level
+
+// Slog level aliases and extensions for GCP logging.
 const (
-	DebugSeverity   = "DEBUG"
-	InfoSeverity    = "INFO"
-	WarningSeverity = "WARNING"
-	ErrorSeverity   = "ERROR"
-	DefaultSeverity = "DEFAULT"
+	LevelDebug     Level = slog.LevelDebug    // Debug or trace information
+	LevelInfo      Level = slog.LevelInfo     // Routine information, such as ongoing status or performance
+	LevelNotice    Level = slog.LevelInfo + 2 // Normal but significant events
+	LevelWarning   Level = slog.LevelWarn     // Warning events might cause problems
+	LevelError     Level = slog.LevelError    // Error events are likely to cause problems
+	LevelCritical  Level = LevelError + 2     // Critical events cause more severe problems or outages
+	LevelAlert     Level = LevelError + 4     // A person must take an action immediately
+	LevelEmergency Level = LevelError + 6     // One or more systems are unusable
+)
+
+// Severity values defined by GCP logging.
+// https://docs.cloud.google.com/logging/docs/reference/v2/rest/v2/LogEntry#LogSeverity
+const (
+	DefaultSeverity   = "DEFAULT"   // The log entry has no assigned severity level.
+	DebugSeverity     = "DEBUG"     // Debug or trace information
+	InfoSeverity      = "INFO"      // Routine information, such as ongoing status or performance
+	NoticeSeverity    = "NOTICE"    // Normal but significant events
+	WarningSeverity   = "WARNING"   // Warning events might cause problems
+	ErrorSeverity     = "ERROR"     // Error events are likely to cause problems
+	CriticalSeverity  = "CRITICAL"  // Critical events cause more severe problems or outages
+	AlertSeverity     = "ALERT"     // A person must take an action immediately
+	EmergencySeverity = "EMERGENCY" // One or more systems are unusable
 )
 
 var DefaultOpts = slog.HandlerOptions{
@@ -221,16 +240,29 @@ func extractValue(v slog.Value) any {
 }
 
 func severityFromLevel(level slog.Level) string {
-	switch level {
-	case slog.LevelDebug:
-		return DebugSeverity
-	case slog.LevelInfo:
-		return InfoSeverity
-	case slog.LevelWarn:
-		return WarningSeverity
-	case slog.LevelError:
-		return ErrorSeverity
-	default:
-		return DefaultSeverity
+	if level >= LevelEmergency {
+		return EmergencySeverity
 	}
+	if level >= LevelAlert {
+		return AlertSeverity
+	}
+	if level >= LevelCritical {
+		return CriticalSeverity
+	}
+	if level >= LevelError {
+		return ErrorSeverity
+	}
+	if level >= LevelWarning {
+		return WarningSeverity
+	}
+	if level >= LevelNotice {
+		return NoticeSeverity
+	}
+	if level >= LevelInfo {
+		return InfoSeverity
+	}
+	if level >= LevelDebug {
+		return DebugSeverity
+	}
+	return DefaultSeverity
 }

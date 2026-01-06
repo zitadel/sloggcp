@@ -306,27 +306,47 @@ func Test_severityFromLevel(t *testing.T) {
 	}{
 		{
 			name:  "Debug",
-			level: slog.LevelDebug,
+			level: LevelDebug,
 			want:  DebugSeverity,
 		},
 		{
 			name:  "Info",
-			level: slog.LevelInfo,
+			level: LevelInfo,
 			want:  InfoSeverity,
 		},
 		{
-			name:  "Warn",
-			level: slog.LevelWarn,
+			name:  "Notice",
+			level: LevelNotice,
+			want:  NoticeSeverity,
+		},
+		{
+			name:  "Warning",
+			level: LevelWarning,
 			want:  WarningSeverity,
 		},
 		{
 			name:  "Error",
-			level: slog.LevelError,
+			level: LevelError,
 			want:  ErrorSeverity,
 		},
 		{
+			name:  "Critical",
+			level: LevelCritical,
+			want:  CriticalSeverity,
+		},
+		{
+			name:  "Alert",
+			level: LevelAlert,
+			want:  AlertSeverity,
+		},
+		{
+			name:  "Emergency",
+			level: LevelEmergency,
+			want:  EmergencySeverity,
+		},
+		{
 			name:  "Default",
-			level: slog.Level(-1),
+			level: Level(-10),
 			want:  DefaultSeverity,
 		},
 	}
