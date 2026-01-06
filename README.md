@@ -1,8 +1,8 @@
 # sloggcp
 
-[![Go Reference](https://pkg.go.dev/badge/github.com/muhlemmer/sloggcp.svg)](https://pkg.go.dev/github.com/muhlemmer/sloggcp)
+[![Go Reference](https://pkg.go.dev/badge/github.com/zitadel/sloggcp.svg)](https://pkg.go.dev/github.com/zitadel/sloggcp)
 [![codecov](https://codecov.io/github/muhlemmer/sloggcp/graph/badge.svg?token=Q1HHED6QPM)](https://codecov.io/github/muhlemmer/sloggcp)
-[![Go Report Card](https://goreportcard.com/badge/github.com/muhlemmer/sloggcp)](https://goreportcard.com/report/github.com/muhlemmer/sloggcp)
+[![Go Report Card](https://goreportcard.com/badge/github.com/zitadel/sloggcp)](https://goreportcard.com/report/github.com/zitadel/sloggcp)
 
 `sloggcp` provides utilities to integrate Go's slog logging with Google Cloud Platform (GCP) structured logging.
 
@@ -34,7 +34,7 @@ See the documentation for more details.
 ### Get module
 
 ```sh
-go get github.com/muhlemmer/sloggcp@latest
+go get github.com/zitadel/sloggcp@latest
 ```
 
 ### Override default attributes
@@ -43,7 +43,7 @@ go get github.com/muhlemmer/sloggcp@latest
 package main
 
 import (
-	"github.com/muhlemmer/sloggcp"
+	"github.com/zitadel/sloggcp"
 	"log/slog"
 	"os"
 )
@@ -73,7 +73,7 @@ import (
 	_ "runtime/debug"
 	"time"
 
-	"github.com/muhlemmer/sloggcp"
+	"github.com/zitadel/sloggcp"
 )
 
 type AppError struct {

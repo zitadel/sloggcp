@@ -8,7 +8,7 @@ import (
 	_ "runtime/debug"
 	"time"
 
-	"github.com/muhlemmer/sloggcp"
+	"github.com/zitadel/sloggcp"
 )
 
 type AppError struct {

@@ -113,7 +113,7 @@ func TestHandler(t *testing.T) {
 				Message:  "this is info",
 				Severity: InfoSeverity,
 				Source: testSource{
-					Function: "github.com/muhlemmer/sloggcp.TestHandler.func4",
+					Function: "github.com/zitadel/sloggcp.TestHandler.func4",
 				},
 				Group: groupTypeTest,
 			},

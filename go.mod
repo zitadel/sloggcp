@@ -1,3 +1,3 @@
-module github.com/muhlemmer/sloggcp
+module github.com/zitadel/sloggcp
 
 go 1.25

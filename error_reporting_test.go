@@ -107,7 +107,7 @@ func TestNewReportLocation(t *testing.T) {
 
 			const (
 				wantFileSuffix = "error_reporting_test.go"
-				wantFuncName   = "github.com/muhlemmer/sloggcp.TestNewReportLocation.func1"
+				wantFuncName   = "github.com/zitadel/sloggcp.TestNewReportLocation.func1"
 			)
 
 			if !strings.HasSuffix(got.FilePath, wantFileSuffix) {
