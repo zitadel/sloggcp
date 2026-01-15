@@ -1,6 +1,8 @@
 package sloggcp
 
 import (
+	"bytes"
+	"encoding/json"
 	"errors"
 	"log/slog"
 	"reflect"
@@ -194,4 +196,44 @@ func (m mockStackAndReportValuer) LogValue() slog.Value {
 		slog.String("key1", "value1"),
 		slog.Int("key2", 42),
 	)
+}
+
+func TestReportLocation_LogValue(t *testing.T) {
+	type schema struct {
+		Msg      string
+		Level    string
+		Location *ReportLocation
+	}
+
+	var buf bytes.Buffer
+	logger := slog.New(slog.NewJSONHandler(&buf, nil))
+
+	location := NewReportLocation(0)
+	_, _, wantLine, _ := runtime.Caller(0)
+	wantLine-- // previous line
+	logger.Info("test", "location", location)
+
+	var got schema
+	err := json.Unmarshal(buf.Bytes(), &got)
+	if err != nil {
+		t.Fatalf("json.Unmarshal() error = %v", err)
+	}
+	if got.Msg != "test" {
+		t.Errorf("LogValue() Msg = %v, want %v", got.Msg, "test")
+	}
+	if got.Level != "INFO" {
+		t.Errorf("LogValue() Level = %v, want %v", got.Level, "info")
+	}
+	if got.Location == nil {
+		t.Fatal("LogValue() Location = nil, want non-nil")
+	}
+	if !strings.HasSuffix(got.Location.FilePath, "error_reporting_test.go") {
+		t.Errorf("LogValue() Location.FilePath = %v, want suffix %v", got.Location.FilePath, "error_reporting_test.go")
+	}
+	if got.Location.LineNumber != wantLine {
+		t.Errorf("LogValue() Location.LineNumber = %v, want %v", got.Location.LineNumber, wantLine)
+	}
+	if !strings.HasSuffix(got.Location.FunctionName, "TestReportLocation_LogValue") {
+		t.Errorf("LogValue() Location.FunctionName = %v, want suffix %v", got.Location.FunctionName, "TestReportLocation_LogValue")
+	}
 }
