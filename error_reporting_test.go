@@ -18,39 +18,51 @@ func Test_assertErrorValue(t *testing.T) {
 		wantReportLocation *ReportLocation
 	}{
 		{
-			name:               "string value",
+			name:               "string type",
 			value:              "oops",
 			wantErrMsg:         "oops",
 			wantReportLocation: nil,
 		},
 		{
-			name:               "error value",
+			name:               "error type",
 			value:              errors.New("oops"),
 			wantErrMsg:         "oops",
 			wantReportLocation: nil,
 		},
 		{
-			name:               "ReportLocationError value",
+			name:               "ReportLocationError type",
 			value:              mockReportLocationError{},
 			wantErrMsg:         "mockReportLocationError",
 			wantReportLocation: &mockReportLocation,
 		},
 		{
-			name:               "StackTraceError value",
-			value:              mockStackTraceError{},
+			name:               "StackTraceError type returns stack",
+			value:              mockStackTraceError{true},
 			wantErrMsg:         "stack",
 			wantReportLocation: nil,
 		},
 		{
-			name:               "stackAndReport value",
-			value:              mockStackAndReport{},
+			name:               "StackTraceError type no stack",
+			value:              mockStackTraceError{false},
+			wantErrMsg:         "mockStackTraceError",
+			wantReportLocation: nil,
+		},
+		{
+			name:               "stackAndReport type returns stack and report location",
+			value:              mockStackAndReport{true},
 			wantErrMsg:         "stack",
 			wantReportLocation: &mockReportLocation,
 		},
 		{
-			name:           "unknown type value",
+			name:               "stackAndReport type returns only report location",
+			value:              mockStackAndReport{false},
+			wantErrMsg:         "mockStackAndReport",
+			wantReportLocation: &mockReportLocation,
+		},
+		{
+			name:           "unknown type",
 			value:          42,
-			wantErrMsg:     "!!! can't handle error report for type int !!!",
+			wantErrMsg:     "sloggcp: unsupported type int with value 42",
 			locationNotNil: true,
 		},
 	}
@@ -139,24 +151,34 @@ func (m mockReportLocationError) ReportLocation() *ReportLocation {
 	return &mockReportLocation
 }
 
-type mockStackTraceError struct{}
+type mockStackTraceError struct {
+	returnStack bool
+}
 
 func (m mockStackTraceError) Error() string {
 	return "mockStackTraceError"
 }
 
-func (m mockStackTraceError) StackTrace() []byte {
-	return []byte("stack")
+func (m mockStackTraceError) StackTrace() ([]byte, bool) {
+	if m.returnStack {
+		return []byte("stack"), m.returnStack
+	}
+	return nil, false
 }
 
-type mockStackAndReport struct{}
+type mockStackAndReport struct {
+	returnStack bool
+}
 
 func (m mockStackAndReport) Error() string {
 	return "mockStackAndReport"
 }
 
-func (m mockStackAndReport) StackTrace() []byte {
-	return []byte("stack")
+func (m mockStackAndReport) StackTrace() ([]byte, bool) {
+	if m.returnStack {
+		return []byte("stack"), m.returnStack
+	}
+	return nil, false
 }
 
 func (m mockStackAndReport) ReportLocation() *ReportLocation {
