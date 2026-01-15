@@ -238,7 +238,7 @@ func TestHandler(t *testing.T) {
 			},
 			want: &expectSchema{
 				Type:     ErrorReportTypeValue,
-				Message:  "stack",
+				Message:  "mockStackTraceError\nstack",
 				Severity: ErrorSeverity,
 				Error:    "mockStackTraceError",
 			},
@@ -250,7 +250,7 @@ func TestHandler(t *testing.T) {
 			},
 			want: &expectSchema{
 				Type:           ErrorReportTypeValue,
-				Message:        "stack",
+				Message:        "mockStackAndReport\nstack",
 				Severity:       ErrorSeverity,
 				Error:          "mockStackAndReport",
 				ReportLocation: mockReportLocation,
@@ -263,7 +263,7 @@ func TestHandler(t *testing.T) {
 			},
 			want: &expectSchema{
 				Type:     ErrorReportTypeValue,
-				Message:  "stack",
+				Message:  "mockStackAndReport\nstack",
 				Severity: ErrorSeverity,
 				Error: map[string]any{
 					"key1": "value1",
