@@ -92,6 +92,16 @@ func NewReportLocation(skip int) *ReportLocation {
 	}
 }
 
+// LogValue implements [slog.LogValuer].
+// It allows a ReportLocation to be used directly in other handlers.
+func (r *ReportLocation) LogValue() slog.Value {
+	return slog.GroupValue(
+		slog.String(FilePathKey, r.FilePath),
+		slog.Int(LineNumberKey, r.LineNumber),
+		slog.String(FunctionNameKey, r.FunctionName),
+	)
+}
+
 func checkAndSetErrorReport(a slog.Attr, out map[string]any) bool {
 	if a.Key != ErrorKey {
 		return false
