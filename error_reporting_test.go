@@ -40,7 +40,7 @@ func Test_assertErrorValue(t *testing.T) {
 		{
 			name:               "StackTraceError type returns stack",
 			value:              mockStackTraceError{true},
-			wantErrMsg:         "stack",
+			wantErrMsg:         "mockStackTraceError\nstack",
 			wantReportLocation: nil,
 		},
 		{
@@ -52,7 +52,7 @@ func Test_assertErrorValue(t *testing.T) {
 		{
 			name:               "stackAndReport type returns stack and report location",
 			value:              mockStackAndReport{true},
-			wantErrMsg:         "stack",
+			wantErrMsg:         "mockStackAndReport\nstack",
 			wantReportLocation: &mockReportLocation,
 		},
 		{
@@ -64,7 +64,7 @@ func Test_assertErrorValue(t *testing.T) {
 		{
 			name:           "unknown type",
 			value:          42,
-			wantErrMsg:     "sloggcp: unsupported type int with value 42",
+			wantErrMsg:     "sloggcp: unsupported type int for error with value 42",
 			locationNotNil: true,
 		},
 	}

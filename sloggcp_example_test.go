@@ -80,5 +80,5 @@ func ExampleNewErrorReportingHandler() {
 	logger.Error("", "err", err)
 	// Output:
 	// {"@type":"type.googleapis.com/google.devtools.clouderrorreporting.v1beta1.ReportedErrorEvent","error":"something went wrong","message":"something went wrong","severity":"ERROR","time":"0001-01-01T00:00:00Z"}
-	// {"@type":"type.googleapis.com/google.devtools.clouderrorreporting.v1beta1.ReportedErrorEvent","error":{"message":"failed to fetch user data","parent":"database connection failed"},"message":"[STACK TRACE]","reportLocation":{"filePath":"user_service.go","lineNumber":42,"functionName":"fetchUserData"},"severity":"ERROR","time":"0001-01-01T00:00:00Z"}
+	// {"@type":"type.googleapis.com/google.devtools.clouderrorreporting.v1beta1.ReportedErrorEvent","error":{"message":"failed to fetch user data","parent":"database connection failed"},"message":"failed to fetch user data: database connection failed\n[STACK TRACE]","reportLocation":{"filePath":"user_service.go","lineNumber":42,"functionName":"fetchUserData"},"severity":"ERROR","time":"0001-01-01T00:00:00Z"}
 }

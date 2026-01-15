@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log/slog"
 	"runtime"
+	"strings"
 
 	_ "runtime/debug"
 )
@@ -42,30 +43,44 @@ type ReportLocationError interface {
 	ReportLocation() *ReportLocation
 }
 
-func assertErrorValue(value any) (errMsg string, reportLocation *ReportLocation) {
-	if v, typeOk := value.(StackTraceError); typeOk {
-		if trace, traceOk := v.StackTrace(); traceOk {
-			errMsg = string(trace)
-		}
-	}
-	if v, ok := value.(ReportLocationError); ok {
-		reportLocation = v.ReportLocation()
-	}
-	if errMsg != "" {
-		return errMsg, reportLocation
+// assertErrorValue inspects the given value and tries to extract
+// the error message and report location information.
+// Supported value types are:
+//   - string
+//   - error (including [StackTraceError] and [ReportLocationError])
+//
+// For unsupported types, a generic error message is returned.
+// If the error contains a stack trace, the error message is kept as header,
+// followed by the stack trace separated by a newline.
+func assertErrorValue(value any) (string, *ReportLocation) {
+	// String type won't match any other type assertions below,
+	// so we can return early.
+	if v, ok := value.(string); ok {
+		return v, nil
 	}
 
-	// Try to extract error message from other types.
-	switch v := value.(type) {
-	case error:
-		errMsg = v.Error()
-	case string:
-		errMsg = v
-	default:
-		errMsg = fmt.Sprintf("sloggcp: unsupported type %T with value %v", v, v)
-		reportLocation = NewReportLocation(0)
+	err, ok := value.(error)
+	if !ok {
+		return fmt.Sprintf("sloggcp: unsupported type %T for error with value %v", value, value),
+			NewReportLocation(0)
 	}
-	return errMsg, reportLocation
+
+	var msgBuf strings.Builder
+	msgBuf.WriteString(err.Error())
+
+	if v, ok := err.(StackTraceError); ok {
+		if trace, traceOk := v.StackTrace(); traceOk {
+			msgBuf.Grow(len(trace) + 1)
+			msgBuf.WriteByte('\n')
+			msgBuf.Write(trace)
+		}
+	}
+
+	var reportLocation *ReportLocation
+	if v, ok := err.(ReportLocationError); ok {
+		reportLocation = v.ReportLocation()
+	}
+	return msgBuf.String(), reportLocation
 }
 
 type ReportLocation struct {
