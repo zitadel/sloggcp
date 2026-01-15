@@ -222,7 +222,7 @@ func TestReportLocation_LogValue(t *testing.T) {
 		t.Errorf("LogValue() Msg = %v, want %v", got.Msg, "test")
 	}
 	if got.Level != "INFO" {
-		t.Errorf("LogValue() Level = %v, want %v", got.Level, "info")
+		t.Errorf("LogValue() Level = %v, want %v", got.Level, "INFO")
 	}
 	if got.Location == nil {
 		t.Fatal("LogValue() Location = nil, want non-nil")
