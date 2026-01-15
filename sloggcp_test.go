@@ -234,7 +234,7 @@ func TestHandler(t *testing.T) {
 		{
 			name: "log StackTraceError",
 			log: func(logger *slog.Logger) {
-				logger.Error("error message", "error", mockStackTraceError{})
+				logger.Error("error message", "error", mockStackTraceError{true})
 			},
 			want: &expectSchema{
 				Type:     ErrorReportTypeValue,
@@ -246,7 +246,7 @@ func TestHandler(t *testing.T) {
 		{
 			name: "log stackAndReport",
 			log: func(logger *slog.Logger) {
-				logger.Error("error message", "error", mockStackAndReport{})
+				logger.Error("error message", "error", mockStackAndReport{true})
 			},
 			want: &expectSchema{
 				Type:           ErrorReportTypeValue,
@@ -259,7 +259,7 @@ func TestHandler(t *testing.T) {
 		{
 			name: "log stackAndReportValuer",
 			log: func(logger *slog.Logger) {
-				logger.Error("error message", "error", mockStackAndReportValuer{})
+				logger.Error("error message", "error", mockStackAndReportValuer{mockStackAndReport{true}})
 			},
 			want: &expectSchema{
 				Type:     ErrorReportTypeValue,

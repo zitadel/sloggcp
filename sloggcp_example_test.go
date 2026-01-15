@@ -29,8 +29,8 @@ func (e AppError) ReportLocation() *sloggcp.ReportLocation {
 }
 
 // StackTrace implements [sloggcp.StackTraceError].
-func (e AppError) StackTrace() []byte {
-	return e.stackTrace
+func (e AppError) StackTrace() ([]byte, bool) {
+	return e.stackTrace, e.stackTrace != nil
 }
 
 // LogValue implements [slog.LogValuer].

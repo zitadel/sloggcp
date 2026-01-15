@@ -27,41 +27,42 @@ const (
 
 // StackTraceError is an error that provides a stack trace,
 // from the point where the error was created.
-// The returned stack trace must be the value returned by [debug.Stack].
 type StackTraceError interface {
 	error
-	StackTrace() []byte
+	// StackTrace returns the stack trace as returned by [debug.Stack].
+	// If the error does not have a stack trace, ok is false.
+	StackTrace() (trace []byte, ok bool)
 }
 
-// ReportLocationError is an error that provides report location information,
-// from the point where the error was created.
+// ReportLocationError is an error that provides report location information.
 type ReportLocationError interface {
 	error
+	// ReportLocation returns the report location information, from where the error was created.
+	// If the error does not have report location information, nil may be returned.
 	ReportLocation() *ReportLocation
 }
 
-// Make type switching easier
-type stackAndReport interface {
-	StackTraceError
-	ReportLocationError
-}
-
 func assertErrorValue(value any) (errMsg string, reportLocation *ReportLocation) {
+	if v, typeOk := value.(StackTraceError); typeOk {
+		if trace, traceOk := v.StackTrace(); traceOk {
+			errMsg = string(trace)
+		}
+	}
+	if v, ok := value.(ReportLocationError); ok {
+		reportLocation = v.ReportLocation()
+	}
+	if errMsg != "" {
+		return errMsg, reportLocation
+	}
+
+	// Try to extract error message from other types.
 	switch v := value.(type) {
-	case stackAndReport:
-		errMsg = string(v.StackTrace())
-		reportLocation = v.ReportLocation()
-	case StackTraceError:
-		errMsg = string(v.StackTrace())
-	case ReportLocationError:
-		errMsg = v.Error()
-		reportLocation = v.ReportLocation()
 	case error:
 		errMsg = v.Error()
 	case string:
 		errMsg = v
 	default:
-		errMsg = fmt.Sprintf("!!! can't handle error report for type %T !!!", v)
+		errMsg = fmt.Sprintf("sloggcp: unsupported type %T with value %v", v, v)
 		reportLocation = NewReportLocation(0)
 	}
 	return errMsg, reportLocation
