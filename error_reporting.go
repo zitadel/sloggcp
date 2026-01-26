@@ -1,6 +1,7 @@
 package sloggcp
 
 import (
+	"errors"
 	"fmt"
 	"log/slog"
 	"runtime"
@@ -52,7 +53,7 @@ type ReportLocationError interface {
 // For unsupported types, a generic error message is returned.
 // If the error contains a stack trace, the error message is kept as header,
 // followed by the stack trace separated by a newline.
-func assertErrorValue(value any) (string, *ReportLocation) {
+func assertErrorValue(value any) (_ string, reportLocation *ReportLocation) {
 	// String type won't match any other type assertions below,
 	// so we can return early.
 	if v, ok := value.(string); ok {
@@ -68,17 +69,18 @@ func assertErrorValue(value any) (string, *ReportLocation) {
 	var msgBuf strings.Builder
 	msgBuf.WriteString(err.Error())
 
-	if v, ok := err.(StackTraceError); ok {
-		if trace, traceOk := v.StackTrace(); traceOk {
+	var ste StackTraceError
+	if errors.As(err, &ste) {
+		if trace, traceOk := ste.StackTrace(); traceOk {
 			msgBuf.Grow(len(trace) + 1)
 			msgBuf.WriteByte('\n')
 			msgBuf.Write(trace)
 		}
 	}
 
-	var reportLocation *ReportLocation
-	if v, ok := err.(ReportLocationError); ok {
-		reportLocation = v.ReportLocation()
+	var rpe ReportLocationError
+	if errors.As(err, &rpe) {
+		reportLocation = rpe.ReportLocation()
 	}
 	return msgBuf.String(), reportLocation
 }
