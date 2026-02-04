@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"io"
 	"log/slog"
+	"strings"
 	"sync"
 	"time"
 )
@@ -18,6 +19,8 @@ const (
 	MessageKey        = "message"                               // [slog.MessageKey] replacement
 	SourceLocationKey = "logging.googleapis.com/sourceLocation" // [slog.SourceKey] replacement
 	TimeKey           = slog.TimeKey                            // time key (no replacement needed)
+	TraceKey          = "trace"                                 // "TraceID" replacement (case-insensitive)
+	SpanIDKey         = "spanId"                                // "SpanID" replacement (case-insensitive)
 )
 
 type Level = slog.Level
@@ -186,6 +189,15 @@ func (h *handler) Handle(_ context.Context, r slog.Record) error {
 }
 
 func (h *handler) replaceAttr(groups []string, a slog.Attr) slog.Attr {
+	if len(groups) == 0 {
+		if strings.EqualFold(a.Key, "TraceID") {
+			a.Key = TraceKey
+		}
+		if strings.EqualFold(a.Key, "SpanID") {
+			a.Key = SpanIDKey
+		}
+	}
+
 	if h.opts.ReplaceAttr != nil {
 		a = h.opts.ReplaceAttr(groups, a)
 	}

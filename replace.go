@@ -1,6 +1,9 @@
 package sloggcp
 
-import "log/slog"
+import (
+	"log/slog"
+	"strings"
+)
 
 // ReplaceAttr replaces slog default attributes with GCP compatible ones
 // https://cloud.google.com/logging/docs/structured-logging
@@ -10,15 +13,19 @@ func ReplaceAttr(groups []string, a slog.Attr) slog.Attr {
 	if len(groups) > 0 {
 		return a
 	}
-	switch a.Key {
-	case slog.LevelKey:
+	switch {
+	case a.Key == slog.LevelKey:
 		return replaceLevelAttr(a)
-	case slog.SourceKey:
+	case a.Key == slog.SourceKey:
 		a.Key = SourceLocationKey
-	case slog.MessageKey:
+	case a.Key == slog.MessageKey:
 		a.Key = MessageKey
-	case slog.TimeKey:
+	case a.Key == slog.TimeKey:
 		// no replacement needed
+	case strings.EqualFold(a.Key, "TraceID"):
+		a.Key = TraceKey
+	case strings.EqualFold(a.Key, "SpanID"):
+		a.Key = SpanIDKey
 	}
 	return a
 }
