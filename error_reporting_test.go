@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"log/slog"
 	"reflect"
 	"runtime"
@@ -66,6 +67,24 @@ func Test_assertErrorValue(t *testing.T) {
 			value:          42,
 			wantErrMsg:     "sloggcp: unsupported type int for error with value 42",
 			locationNotNil: true,
+		},
+		{
+			name:               "wrapped StackTraceError type returns stack (fmt.Errorf)",
+			value:              fmt.Errorf("wrapped: %w", mockStackTraceError{true}),
+			wantErrMsg:         "wrapped: mockStackTraceError\nstack",
+			wantReportLocation: nil,
+		},
+		{
+			name:               "wrapped ReportLocationError type (fmt.Errorf)",
+			value:              fmt.Errorf("wrapped: %w", mockReportLocationError{}),
+			wantErrMsg:         "wrapped: mockReportLocationError",
+			wantReportLocation: &mockReportLocation,
+		},
+		{
+			name:               "wrapped stackAndReport type returns stack and report location (fmt.Errorf)",
+			value:              fmt.Errorf("wrapped: %w", mockStackAndReport{true}),
+			wantErrMsg:         "wrapped: mockStackAndReport\nstack",
+			wantReportLocation: &mockReportLocation,
 		},
 	}
 	for _, tt := range tests {
