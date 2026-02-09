@@ -31,6 +31,8 @@ type expectSchema struct {
 	Stringer       string          `json:"stringer"`
 	Marshaller     json.RawMessage `json:"marshaller"`
 	ReportLocation ReportLocation  `json:"reportLocation"`
+	Trace          string          `json:"trace,omitempty"`
+	SpanID         string          `json:"spanId,omitempty"`
 }
 
 type groupType struct {
@@ -270,6 +272,19 @@ func TestHandler(t *testing.T) {
 					"key2": float64(42),
 				},
 				ReportLocation: mockReportLocation,
+			},
+		},
+		{
+			name: "log info message, with trace and spanId",
+			opts: nil,
+			log: func(logger *slog.Logger) {
+				logger.Info("this is info", "TraceID", "trace-12345", "SpanID", "span-67890")
+			},
+			want: &expectSchema{
+				Message:  "this is info",
+				Severity: InfoSeverity,
+				Trace:    "trace-12345",
+				SpanID:   "span-67890",
 			},
 		},
 	}

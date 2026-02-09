@@ -118,6 +118,22 @@ func TestReplaceAttr(t *testing.T) {
 			want: slog.String("message", "test"),
 		},
 		{
+			name: "TraceID",
+			args: args{
+				groups: []string{},
+				a:      slog.String("TraceID", "trace-123"),
+			},
+			want: slog.String("trace", "trace-123"),
+		},
+		{
+			name: "SpanID",
+			args: args{
+				groups: []string{},
+				a:      slog.String("SpanID", "span-123"),
+			},
+			want: slog.String("spanId", "span-123"),
+		},
+		{
 			name: "OtherKey",
 			args: args{
 				groups: []string{},
